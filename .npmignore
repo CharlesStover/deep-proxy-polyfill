@@ -1,0 +1,6 @@
+/.gitignore
+/.npmignore
+/.travis.yml
+/deep-proxy-polyfill.ts
+/deep-proxy-polyfill.spec.ts
+/tsconfig.json
