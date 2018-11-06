@@ -1,6 +1,6 @@
 {
   "name": "deep-proxy-polyfill",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Charles Stover <npmjs@charlesstover.com>",
   "description": "Spy on an object's properties.",
   "license": "MIT",

@@ -14,33 +14,33 @@ describe('deep-proxy-polyfill', () => {
 
   it('should subscribe to get', () => {
     let subscribed: null | string = null;
-    const getSpy = (obj: AnyObject, key: string) => {
+    const get = (obj: AnyObject, key: string) => {
       subscribed = key;
       return obj[key];
     };
     expect(subscribed).to.equal(null);
     const test: AnyObject = { a: 1, b: 2 };
-    deepProxy(test, getSpy).a;
+    deepProxy(test, { get }).a;
     expect(subscribed).to.equal('a');
     expect(subscribed).not.to.equal('b');
   });
 
   it('should subscribe to set', () => {
     let subscribed: null | string = null;
-    const setSpy = (obj: AnyObject, key: string, value: any) => {
+    const set = (obj: AnyObject, key: string, value: any) => {
       subscribed = key;
       obj[key] = value;
     };
     expect(subscribed).to.equal(null);
     const test: AnyObject = { a: 1, b: 2 };
-    deepProxy(test, null, setSpy).a = null;
+    deepProxy(test, { set }).a = null;
     expect(subscribed).to.equal('a');
     expect(subscribed).not.to.equal('b');
   });
 
   it('should deep subscribe to get', () => {
     let subscribed: null | string[] = null;
-    const getSpy = (obj: AnyObject, key: string, _: AnyObject, keys: string[]) => {
+    const get = (obj: AnyObject, key: string, _: AnyObject, keys: string[]) => {
       subscribed = keys.concat(key);
       return obj[key];
     };
@@ -52,7 +52,7 @@ describe('deep-proxy-polyfill', () => {
       }
     };
     expect(subscribed).to.equal(null);
-    deepProxy(test, getSpy).a.b.c;
+    deepProxy(test, { get }).a.b.c;
     expect(subscribed).not.to.equal(null);
     expect(subscribed).to.be.an('array');
     expect(subscribed).to.have.lengthOf(3);
@@ -65,10 +65,7 @@ describe('deep-proxy-polyfill', () => {
 
   it('should deep subscribe to set', () => {
     let subscribed: null | string[] = null;
-    const getSpy = (obj: AnyObject, key: string) => {
-      return obj[key];
-    };
-    const setSpy = (obj: AnyObject, key: string, value: any, _: AnyObject, keys: string[]) => {
+    const set = (obj: AnyObject, key: string, value: any, _: AnyObject, keys: string[]) => {
       subscribed = keys.concat(key);
       obj[key] = value;
     };
@@ -80,7 +77,7 @@ describe('deep-proxy-polyfill', () => {
       }
     };
     expect(subscribed).to.equal(null);
-    deepProxy(test, getSpy, setSpy).a.b.c = 'str';
+    deepProxy(test, { set }).a.b.c = 'str';
     expect(subscribed).not.to.equal(null);
     expect(subscribed).to.be.an('array');
     expect(subscribed).to.have.lengthOf(3);

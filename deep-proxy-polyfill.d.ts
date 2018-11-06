@@ -1,3 +1,11 @@
-export declare type GetSpy = (obj: Object, key: string, root: Object, keys: string[]) => any;
-export declare type SetSpy = (obj: Object, key: string, value: any, root: Object, keys: string[]) => any;
-export default function spyOn<Shape extends {}>(obj: Shape, getSpy?: GetSpy | null, setSpy?: SetSpy | null): Shape;
+interface AnyObject {
+    [key: string]: any;
+}
+export declare type GetHandler = (obj: Object, key: string, root: Object, keys: string[]) => any;
+export declare type SetHandler = (obj: Object, key: string, value: any, root: Object, keys: string[]) => any;
+export interface Handler {
+    get?: GetHandler;
+    set?: SetHandler;
+}
+export default function deepProxy<Shape extends AnyObject>(target: Shape, handler?: Handler): Shape;
+export {};

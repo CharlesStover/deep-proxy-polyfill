@@ -10,7 +10,7 @@ Acts as a _recursive_ Proxy for getter and setter attributes on an object.
 ## Getter
 
 ```JavaScript
-import spyOn from 'deep-proxy-polyfill';
+import deepProxy from 'deep-proxy-polyfill';
 
 const rootObject = {
   a: {
@@ -20,7 +20,7 @@ const rootObject = {
   }
 };
 
-const getSpy = (obj, key, root, keys) => {
+const getHandler = (obj, key, root, keys) => {
   assert(root === rootObject);
 
   // [ 'a', 'b' ]
@@ -33,16 +33,16 @@ const getSpy = (obj, key, root, keys) => {
   return obj[key];
 };
 
-const spyObject = spyOn(rootObject, getSpy);
+const proxy = deepProxy(rootObject, { get: getHandler });
 
 // Getter returns an additional 2.
-console.log(spyObject.a.b.c);
+assert(proxy.a.b.c === 3);
 ```
 
 ## Setter
 
 ```JavaScript
-import spyOn from 'deep-proxy-polyfill';
+import deepProxy from 'deep-proxy-polyfill';
 
 const rootObject = {
   a: {
@@ -52,21 +52,14 @@ const rootObject = {
   }
 };
 
-// Enable getters.
-const getSpy = (obj, key) => {
-  return obj[key];
-};
-
-const setSpy = (obj, key, value, root, keys) => {
+// Set values with an additional 2.
+const setHandler = (obj, key, value, root, keys) => {
   assert(root === rootObject);
   obj[key] = value + 2;
 };
 
-const spyObject = spyOn(rootObject, getSpy, setSpy);
+const proxy = deepProxy(rootObject, { set: setHandler });
+proxy.a.b.c = 3;
 
-// Setter adds 2.
-spyObject.a.b.c = 3;
-
-assert(spyObject.a.b.c === 5);
-
+assert(proxy.a.b.c === 5);
 ```

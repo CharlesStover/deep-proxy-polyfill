@@ -1,41 +1,52 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var isSpyable = function (obj) {
+;
+var isProxyable = function (obj) {
     return typeof obj === 'object' &&
         obj !== null &&
         (obj.constructor === Object ||
             Object.getPrototypeOf(obj) === null);
 };
-var recursiveSpyOn = function (obj, getSpy, setSpy, root, keys) {
-    return Object.keys(obj).reduce(function (accumulator, key) {
+var recursiveDeepProxy = function (target, handler, root, keys) {
+    if (!isProxyable(target)) {
+        return target;
+    }
+    var getHandler = handler.get;
+    var setHandler = handler.set;
+    return Object.keys(target).reduce(function (accumulator, key) {
         var attributes = {
             configurable: false,
             enumerable: true
         };
-        if (getSpy) {
+        if (getHandler) {
             attributes.get = function () {
-                var get = getSpy(obj, key, root, keys);
-                if (isSpyable(get)) {
-                    return recursiveSpyOn(get, getSpy, setSpy, root, keys.concat(key));
-                }
-                return get;
+                return recursiveDeepProxy(getHandler(target, key, root, keys), handler, root, keys.concat(key));
             };
         }
-        if (setSpy) {
-            attributes.set = function (v) {
-                setSpy(obj, key, v, root, keys);
+        else {
+            attributes.get = function () {
+                return recursiveDeepProxy(target[key], handler, root, keys.concat(key));
+            };
+        }
+        if (setHandler) {
+            attributes.set = function (value) {
+                setHandler(target, key, value, root, keys);
+            };
+        }
+        else {
+            attributes.set = function (value) {
+                target[key] = value;
             };
         }
         Object.defineProperty(accumulator, key, attributes);
         return accumulator;
-    }, Object.getPrototypeOf(obj) === null ?
+    }, Object.getPrototypeOf(target) === null ?
         Object.create(null) :
         {});
 };
-function spyOn(obj, getSpy, setSpy) {
-    if (getSpy === void 0) { getSpy = null; }
-    if (setSpy === void 0) { setSpy = null; }
-    return recursiveSpyOn(obj, getSpy, setSpy, obj, []);
+function deepProxy(target, handler) {
+    if (handler === void 0) { handler = {}; }
+    return recursiveDeepProxy(target, handler, target, []);
 }
-exports.default = spyOn;
+exports.default = deepProxy;
 ;

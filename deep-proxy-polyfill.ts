@@ -1,7 +1,16 @@
-export type GetSpy = (obj: Object, key: string, root: Object, keys: string[]) => any;
-export type SetSpy = (obj: Object, key: string, value: any, root: Object, keys: string[]) => any;
+interface AnyObject {
+  [key: string]: any;
+};
 
-const isSpyable = (obj: Object): boolean =>
+export type GetHandler = (obj: Object, key: string, root: Object, keys: string[]) => any;
+export type SetHandler = (obj: Object, key: string, value: any, root: Object, keys: string[]) => any;
+
+export interface Handler {
+  get?: GetHandler;
+  set?: SetHandler;
+}
+
+const isProxyable = (obj: Object): boolean =>
   typeof obj === 'object' &&
   obj !== null &&
   (
@@ -13,14 +22,21 @@ const isSpyable = (obj: Object): boolean =>
     Object.getPrototypeOf(obj) === null
   );
 
-const recursiveSpyOn = <Shape extends {}>(
-  obj: Shape,
-  getSpy: GetSpy | null,
-  setSpy: SetSpy | null,
+const recursiveDeepProxy = <Shape extends AnyObject>(
+  target: Shape,
+  handler: Handler,
   root: Object,
   keys: string[]
 ) => {
-  return Object.keys(obj).reduce(
+
+  // If this object can't be proxied, return it as-is.
+  if (!isProxyable(target)) {
+    return target;
+  }
+
+  const getHandler: GetHandler | undefined = handler.get;
+  const setHandler: SetHandler | undefined = handler.set;
+  return Object.keys(target).reduce(
     (accumulator: Object, key: string): Object => {
 
       const attributes: PropertyDescriptor & ThisType<any> = {
@@ -28,19 +44,37 @@ const recursiveSpyOn = <Shape extends {}>(
         enumerable: true
       };
 
-      if (getSpy) {
+      // Custom getter
+      if (getHandler) {
         attributes.get = (): any => {
-          const get = getSpy(obj, key, root, keys);
-          if (isSpyable(get)) {
-            return recursiveSpyOn(get, getSpy, setSpy, root, keys.concat(key));
-          }
-          return get;
+          return recursiveDeepProxy(
+            getHandler(target, key, root, keys),
+            handler, root, keys.concat(key)
+          );
         };
       }
 
-      if (setSpy) {
-        attributes.set = (v: any): void => {
-          setSpy(obj, key, v, root, keys);
+      // Default getter
+      else {
+        attributes.get = (): any => {
+          return recursiveDeepProxy(
+            target[key],
+            handler, root, keys.concat(key)
+          );
+        };
+      }
+
+      // Custom setter
+      if (setHandler) {
+        attributes.set = (value: any): void => {
+          setHandler(target, key, value, root, keys);
+        };
+      }
+
+      // Default setter
+      else {
+        attributes.set = (value: any): void => {
+          target[key] = value;
         };
       }
 
@@ -49,16 +83,12 @@ const recursiveSpyOn = <Shape extends {}>(
     },
 
     // If the original Object has no prototype, neither should this one.
-    Object.getPrototypeOf(obj) === null ?
+    Object.getPrototypeOf(target) === null ?
       Object.create(null) :
       {}
   );
 };
 
-export default function spyOn<Shape extends {}>(
-  obj: Shape,
-  getSpy: GetSpy | null = null,
-  setSpy: SetSpy | null = null
-): Shape {
-  return recursiveSpyOn(obj, getSpy, setSpy, obj, []);
+export default function deepProxy<Shape extends AnyObject>(target: Shape, handler: Handler = {}): Shape {
+  return recursiveDeepProxy(target, handler, target, []);
 };
