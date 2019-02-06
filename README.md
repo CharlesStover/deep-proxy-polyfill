@@ -1,12 +1,12 @@
 # Deep Proxy Polyfill [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Deeply%20nest%20JavaScript%20Proxy's%20get%20and%20set%20property%20listeners,%20even%20in%20browsers%20that%20don't%20support%20Proxies!&url=https://github.com/CharlesStover/deep-proxy-polyfill&via=CharlesStover&hashtags=javascript,typescript,webdev,webdevelopment)
 
-Acts as a _recursive_ Proxy for getter and setter attributes on an object.
+Acts as a deep or recursive Proxy for getter and setter attributes on an object.
 
-[![version](https://img.shields.io/npm/v/deep-proxy-polyfill.svg)](https://github.com/CharlesStover/deep-proxy-polyfill/)
-[![build](https://travis-ci.com/CharlesStover/deep-proxy-polyfill.svg)](https://travis-ci.com/CharlesStover/deep-proxy-polyfill/)
-[![downloads](https://img.shields.io/npm/dt/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill)
+[![version](https://img.shields.io/npm/v/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill/)
 [![minified size](https://img.shields.io/bundlephobia/min/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill)
 [![minzipped size](https://img.shields.io/bundlephobia/minzip/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill)
+[![downloads](https://img.shields.io/npm/dt/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill)
+[![build](https://travis-ci.com/CharlesStover/deep-proxy-polyfill.svg)](https://travis-ci.com/CharlesStover/deep-proxy-polyfill/)
 
 ## Install
 
