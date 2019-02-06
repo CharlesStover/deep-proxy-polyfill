@@ -2,7 +2,7 @@
 
 Acts as a _recursive_ Proxy for getter and setter attributes on an object.
 
-[![package](https://img.shields.io/npm/v/deep-proxy-polyfill.svg)](https://github.com/CharlesStover/deep-proxy-polyfill/)
+[![version](https://img.shields.io/npm/v/deep-proxy-polyfill.svg)](https://github.com/CharlesStover/deep-proxy-polyfill/)
 [![build](https://travis-ci.com/CharlesStover/deep-proxy-polyfill.svg)](https://travis-ci.com/CharlesStover/deep-proxy-polyfill/)
 [![downloads](https://img.shields.io/npm/dt/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill)
 [![minified size](https://img.shields.io/bundlephobia/min/deep-proxy-polyfill.svg)](https://www.npmjs.com/package/deep-proxy-polyfill)
