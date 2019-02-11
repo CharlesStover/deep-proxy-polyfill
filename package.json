@@ -1,16 +1,26 @@
 {
   "name": "deep-proxy-polyfill",
-  "version": "1.0.1",
-  "author": "Charles Stover <npmjs@charlesstover.com>",
+  "version": "1.0.2",
+  "author": "Charles Stover <deep-proxy-polyfill@charlesstover.com>",
+  "bugs": {
+    "email" : "deep-proxy-polyfill@charlesstover.com",
+    "url" : "https://github.com/CharlesStover/deep-proxy-polyfill/issues"
+  },
   "description": "Spy on an object's properties.",
+  "files": [
+    "deep-proxy-polyfill.d.ts",
+    "deep-proxy-polyfill.js",
+    "package.json"
+  ],
   "license": "MIT",
-  "main": "index.js",
-  "repository": "https://github.com/CharlesStover/deep-proxy-polyfill.git",
+  "main": "deep-proxy-polyfill.js",
+  "repository": "github:CharlesStover/deep-proxy-polyfill",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "tsc",
     "test": "mocha -r ts-node/register deep-proxy-polyfill.spec.ts"
   },
+  "types": "./deep-proxy-polyfill.d.ts",
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
