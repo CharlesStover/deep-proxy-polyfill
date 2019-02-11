@@ -1,6 +1,6 @@
 {
   "name": "deep-proxy-polyfill",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Charles Stover <deep-proxy-polyfill@charlesstover.com>",
   "bugs": {
     "email" : "deep-proxy-polyfill@charlesstover.com",
@@ -12,6 +12,7 @@
     "deep-proxy-polyfill.js",
     "package.json"
   ],
+  "homepage": "https://github.com/CharlesStover/deep-proxy-polyfill#readme",
   "license": "MIT",
   "main": "deep-proxy-polyfill.js",
   "repository": "github:CharlesStover/deep-proxy-polyfill",
