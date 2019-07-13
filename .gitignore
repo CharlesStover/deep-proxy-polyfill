@@ -1,1 +1,4 @@
+/.git
 /node_modules
+/deep-proxy-polyfill.d.ts
+/deep-proxy-polyfill.js

@@ -1,8 +1,10 @@
 import { expect } from 'chai';
 import deepProxy from './deep-proxy-polyfill';
 
-interface AnyObject {
-  [key: string]: any;
+interface TestObject {
+  a?: number | TestObject;
+  b?: number | TestObject;
+  c?: number | TestObject;
 }
 
 describe('deep-proxy-polyfill', () => {
@@ -13,45 +15,46 @@ describe('deep-proxy-polyfill', () => {
   });
 
   it('should subscribe to get', () => {
-    let subscribed: null | string = null;
-    const get = (obj: AnyObject, key: string) => {
+    let subscribed: null | keyof TestObject = null;
+    const get = (obj: TestObject, key: keyof TestObject) => {
       subscribed = key;
       return obj[key];
     };
     expect(subscribed).to.equal(null);
-    const test: AnyObject = { a: 1, b: 2 };
-    deepProxy(test, { get }).a;
+    const test: TestObject = { a: 1, b: 2 };
+    deepProxy<TestObject>(test, { get }).a;
     expect(subscribed).to.equal('a');
     expect(subscribed).not.to.equal('b');
   });
 
   it('should subscribe to set', () => {
-    let subscribed: null | string = null;
-    const set = (obj: AnyObject, key: string, value: any) => {
+    let subscribed: null | keyof TestObject= null;
+    const set = (obj: TestObject, key: keyof TestObject, value: any) => {
       subscribed = key;
       obj[key] = value;
     };
     expect(subscribed).to.equal(null);
-    const test: AnyObject = { a: 1, b: 2 };
-    deepProxy(test, { set }).a = null;
+    const test: TestObject = { a: 1, b: 2 };
+    deepProxy(test, { set }).a = 2;
     expect(subscribed).to.equal('a');
     expect(subscribed).not.to.equal('b');
   });
 
   it('should deep subscribe to get', () => {
-    let subscribed: null | string[] = null;
-    const get = (obj: AnyObject, key: string, _: AnyObject, keys: string[]) => {
+    let subscribed: null | Array<keyof TestObject> = null;
+    const get = (obj: TestObject, key: keyof TestObject, _: TestObject, keys: Array<keyof TestObject>) => {
       subscribed = keys.concat(key);
       return obj[key];
     };
-    const test: AnyObject = {
+    const test: TestObject = {
       a: {
         b: {
-          c: 1
-        }
-      }
+          c: 1,
+        },
+      },
     };
     expect(subscribed).to.equal(null);
+    // @ts-ignore: "a might be a number"
     deepProxy(test, { get }).a.b.c;
     expect(subscribed).not.to.equal(null);
     expect(subscribed).to.be.an('array');
@@ -64,19 +67,20 @@ describe('deep-proxy-polyfill', () => {
   });
 
   it('should deep subscribe to set', () => {
-    let subscribed: null | string[] = null;
-    const set = (obj: AnyObject, key: string, value: any, _: AnyObject, keys: string[]) => {
+    let subscribed: null | Array<keyof TestObject> = null;
+    const set = (obj: TestObject, key: keyof TestObject, value: any, _: TestObject, keys: Array<keyof TestObject>) => {
       subscribed = keys.concat(key);
       obj[key] = value;
     };
-    const test: AnyObject = {
+    const test: TestObject = {
       a: {
         b: {
-          c: 1
-        }
-      }
+          c: 1,
+        },
+      },
     };
     expect(subscribed).to.equal(null);
+    // @ts-ignore: "a might be a number"
     deepProxy(test, { set }).a.b.c = 'str';
     expect(subscribed).not.to.equal(null);
     expect(subscribed).to.be.an('array');
@@ -86,7 +90,9 @@ describe('deep-proxy-polyfill', () => {
       expect(subscribed[1]).to.equal('b');
       expect(subscribed[2]).to.equal('c');
     }
+    // @ts-ignore: "a might be a number"
     expect(test.a.b.c).not.to.equal(1);
+    // @ts-ignore: "a might be a number"
     expect(test.a.b.c).to.equal('str');
   });
 });

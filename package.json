@@ -1,6 +1,6 @@
 {
   "name": "deep-proxy-polyfill",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Charles Stover <deep-proxy-polyfill@charlesstover.com>",
   "bugs": {
     "email" : "deep-proxy-polyfill@charlesstover.com",

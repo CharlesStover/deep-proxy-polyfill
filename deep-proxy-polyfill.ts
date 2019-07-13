@@ -1,16 +1,12 @@
-interface AnyObject {
-  [key: string]: any;
-};
+export type GetHandler<T> = (obj: T, key: keyof T, root: Object, keys: Array<keyof T>) => any;
+export type SetHandler<T> = (obj: T, key: keyof T, value: any, root: Object, keys: Array<keyof T>) => any;
 
-export type GetHandler = (obj: Object, key: string, root: Object, keys: string[]) => any;
-export type SetHandler = (obj: Object, key: string, value: any, root: Object, keys: string[]) => any;
-
-export interface Handler {
-  get?: GetHandler;
-  set?: SetHandler;
+export interface Handler<T> {
+  get?: GetHandler<T>;
+  set?: SetHandler<T>;
 }
 
-const isProxyable = (obj: Object): boolean =>
+const isProxyable = (obj: any): obj is Object =>
   typeof obj === 'object' &&
   obj !== null &&
   (
@@ -22,11 +18,11 @@ const isProxyable = (obj: Object): boolean =>
     Object.getPrototypeOf(obj) === null
   );
 
-const recursiveDeepProxy = <Shape extends AnyObject>(
-  target: Shape,
-  handler: Handler,
+const recursiveDeepProxy = <Shape>(
+  target: any,
+  handler: Handler<Shape>,
   root: Object,
-  keys: string[]
+  keys: Array<keyof Shape>,
 ) => {
 
   // If this object can't be proxied, return it as-is.
@@ -34,10 +30,10 @@ const recursiveDeepProxy = <Shape extends AnyObject>(
     return target;
   }
 
-  const getHandler: GetHandler | undefined = handler.get;
-  const setHandler: SetHandler | undefined = handler.set;
-  return Object.keys(target).reduce(
-    (accumulator: Object, key: string): Object => {
+  const getHandler: GetHandler<Shape> | undefined = handler.get;
+  const setHandler: SetHandler<Shape> | undefined = handler.set;
+  return (Object.keys(target) as Array<keyof Shape>).reduce(
+    (accumulator: Object, key: keyof Shape): Object => {
 
       const attributes: PropertyDescriptor & ThisType<any> = {
         configurable: false,
@@ -89,6 +85,6 @@ const recursiveDeepProxy = <Shape extends AnyObject>(
   );
 };
 
-export default function deepProxy<Shape extends AnyObject>(target: Shape, handler: Handler = {}): Shape {
+export default function deepProxy<Shape>(target: Shape, handler: Handler<Shape> = {}): Shape {
   return recursiveDeepProxy(target, handler, target, []);
 };
